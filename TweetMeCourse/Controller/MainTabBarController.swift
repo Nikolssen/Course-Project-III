@@ -6,8 +6,12 @@
 //
 
 import UIKit
+import Swifter
 
 class MainTabBarController: UITabBarController {
+    
+    var accToken: Credential.OAuthAccessToken?
+    var swifter: Swifter!
     
     let actionButton: UIButton = {
         let button = UIButton(type: .system)
@@ -26,8 +30,8 @@ class MainTabBarController: UITabBarController {
         let unselectedImageConfiguration =
             UIImage.SymbolConfiguration(weight: .light)
         let selectedImageConfiguration = UIImage.SymbolConfiguration(weight: .bold)
-        
-        let feedNav = navigationControllerWrapper(for: FeedController(), image: UIImage(systemName: "house", withConfiguration: unselectedImageConfiguration), selectedImage: UIImage(systemName:  "house.fill", withConfiguration: selectedImageConfiguration))
+        let feedVC = FeedController()
+        let feedNav = navigationControllerWrapper(for: feedVC, image: UIImage(systemName: "house", withConfiguration: unselectedImageConfiguration), selectedImage: UIImage(systemName:  "house.fill", withConfiguration: selectedImageConfiguration))
         
         let searchNav = navigationControllerWrapper(for: ExploreController(), image: UIImage(systemName: "magnifyingglass", withConfiguration: unselectedImageConfiguration), selectedImage: UIImage(systemName:  "magnifyingglass", withConfiguration: selectedImageConfiguration))
         
@@ -35,9 +39,17 @@ class MainTabBarController: UITabBarController {
         let notificationsNav = navigationControllerWrapper(for: NotificationsController(), image: UIImage(systemName: "bell", withConfiguration: unselectedImageConfiguration), selectedImage: UIImage(systemName: "bell.fill", withConfiguration: selectedImageConfiguration))
         viewControllers = [feedNav, searchNav, notificationsNav, messageNav]
         configureActionButton()
+        guard let swifter = TwitterService.swifter else
+        {return}
+        swifter.getHomeTimeline(count: 30, success: {json in
+            feedVC.jsonResult = json.array ?? []
+            feedVC.collectionView?.reloadData()
+            print(json)
+        })
+        
     }
     @objc func actionButtonTapped(){
-        print("")
+        present(TweetCreationController(), animated: true, completion: nil)
     }
     
     func navigationControllerWrapper(for rootViewController: UIViewController, image: UIImage?, selectedImage: UIImage?) -> UINavigationController{

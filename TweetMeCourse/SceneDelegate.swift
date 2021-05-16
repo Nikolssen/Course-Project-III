@@ -25,6 +25,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             else
             {
                 rootVC = LoginController(nibName: "LoginController", bundle: nil)
+                TwitterService.swifter = nil
             }
             theWindow.rootViewController = rootVC
             self?.window = theWindow
@@ -40,10 +41,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     func isLoggedIn(completion: @escaping(Bool) -> ()) {
         let userDefaults = UserDefaults.standard
-        guard let accessToken = userDefaults.string(forKey: "oauth_token"), let accessSecretToken = userDefaults.string(forKey: "oauth_token_secret") else {completion(false)
-            return}
+        guard let accessToken = userDefaults.string(forKey: "oauth_token"), let accessSecretToken = userDefaults.string(forKey: "oauth_token_secret") else
+            {
+            completion(false)
+            return
+            }
         let swifter = Swifter(consumerKey: TwitterConstants.consumerKey, consumerSecret: TwitterConstants.consumerSecret, oauthToken: accessToken, oauthTokenSecret: accessSecretToken)
-        swifter.verifyAccountCredentials(includeEntities: true, skipStatus: true, includeEmail: false, success: {_ in completion(true)}, failure: {_ in completion(false)})
+        TwitterService.swifter = swifter
+        swifter.verifyAccountCredentials(includeEntities: false, skipStatus: true, includeEmail: false, success: {_ in                                     completion(true)}, failure: {_ in completion(false)})
     }
 }
 

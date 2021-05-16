@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Swifter
 
 struct TwitterConstants {
     static let consumerKey = "xOCrn1Ptf4lTxyAPHnMgyuzdr"
@@ -13,3 +14,9 @@ struct TwitterConstants {
     static let callbackURL = "tweetmecourse://"
 }
 
+class TwitterService {
+
+    static var swifter: Swifter?
+//    static var token: String?
+//    static var secretKey: String?
+}
