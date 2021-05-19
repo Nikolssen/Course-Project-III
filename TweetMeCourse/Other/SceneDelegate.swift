@@ -47,6 +47,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             return
             }
         let swifter = Swifter(consumerKey: TwitterConstants.consumerKey, consumerSecret: TwitterConstants.consumerSecret, oauthToken: accessToken, oauthTokenSecret: accessSecretToken)
+        TwitterService.userID = userDefaults.string(forKey: "user_id")
         TwitterService.swifter = swifter
         swifter.verifyAccountCredentials(includeEntities: false, skipStatus: true, includeEmail: false, success: {_ in                                     completion(true)}, failure: {_ in completion(false)})
     }

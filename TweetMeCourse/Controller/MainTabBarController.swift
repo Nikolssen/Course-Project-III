@@ -30,7 +30,7 @@ class MainTabBarController: UITabBarController {
         let unselectedImageConfiguration =
             UIImage.SymbolConfiguration(weight: .light)
         let selectedImageConfiguration = UIImage.SymbolConfiguration(weight: .bold)
-        let feedVC = FeedController()
+        let feedVC = FeedController(nibName: "FeedController", bundle: nil)
         let feedNav = navigationControllerWrapper(for: feedVC, image: UIImage(systemName: "house", withConfiguration: unselectedImageConfiguration), selectedImage: UIImage(systemName:  "house.fill", withConfiguration: selectedImageConfiguration))
         
         let searchNav = navigationControllerWrapper(for: ExploreController(), image: UIImage(systemName: "magnifyingglass", withConfiguration: unselectedImageConfiguration), selectedImage: UIImage(systemName:  "magnifyingglass", withConfiguration: selectedImageConfiguration))
@@ -39,13 +39,6 @@ class MainTabBarController: UITabBarController {
         let notificationsNav = navigationControllerWrapper(for: NotificationsController(), image: UIImage(systemName: "bell", withConfiguration: unselectedImageConfiguration), selectedImage: UIImage(systemName: "bell.fill", withConfiguration: selectedImageConfiguration))
         viewControllers = [feedNav, searchNav, notificationsNav, messageNav]
         configureActionButton()
-        guard let swifter = TwitterService.swifter else
-        {return}
-        swifter.getHomeTimeline(count: 30, success: {json in
-            feedVC.jsonResult = json.array ?? []
-            feedVC.collectionView?.reloadData()
-            print(json)
-        })
         
     }
     @objc func actionButtonTapped(){

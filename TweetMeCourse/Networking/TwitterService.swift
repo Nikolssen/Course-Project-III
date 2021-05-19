@@ -17,6 +17,7 @@ struct TwitterConstants {
 class TwitterService {
 
     static var swifter: Swifter?
+    static var userID: String?
 //    static var token: String?
 //    static var secretKey: String?
 }

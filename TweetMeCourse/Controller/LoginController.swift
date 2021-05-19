@@ -29,7 +29,9 @@ class LoginController: UIViewController {
                 let userDefaults = UserDefaults.standard
                 userDefaults.set(accessToken.key, forKey: "oauth_token")
                 userDefaults.set(accessToken.secret, forKey: "oauth_token_secret")
+                userDefaults.set(accessToken.userID, forKey: "user_id")
                 TwitterService.swifter = Swifter(consumerKey: TwitterConstants.consumerKey, consumerSecret: TwitterConstants.consumerSecret, oauthToken: accessToken.key, oauthTokenSecret: accessToken.secret)
+                TwitterService.userID = accessToken.userID
                 self.view.window?.rootViewController = MainTabBarController()
             }
             

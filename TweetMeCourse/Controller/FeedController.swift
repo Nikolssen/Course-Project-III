@@ -1,55 +1,96 @@
 //
 //  FeedController.swift
-//  TweetMe
+//  TweetMeCourse
 //
-//  Created by Admin on 15.04.2021.
+//  Created by Admin on 17.05.2021.
 //
 
 import UIKit
 import Swifter
 
 class FeedController: UIViewController {
+
+    @IBOutlet weak var tableView: UITableView!
+    var tweets: [Tweet] = []
     
-    var jsonResult: [JSON] = []
-    var collectionView: UICollectionView?
     override func viewDidLoad() {
+
         super.viewDidLoad()
         configureUI()
-        configureCollectionView()
+        tableView.register(UINib(nibName: "TweetCell", bundle: nil), forCellReuseIdentifier: "TweetID")
+        tableView.delegate = self
+        tableView.dataSource = self
+        
+        guard let swifter = TwitterService.swifter else
+        {return}
+        swifter.getHomeTimeline(count: 10, success: {[weak self] json in
+            if let array = json.array {
+                self?.tweets = Tweet.array(of: array)
+                self?.tableView?.reloadData()
+            }
+            print(json)
+        })
     }
     
     func configureUI(){
-        view.backgroundColor = .quaternarySystemFill
+        view.backgroundColor = UIColor(named: "BackgroundColor")
         let textAttributes = [NSAttributedString.Key.foregroundColor: UIColor(red: 229.0/255, green: 26.0/255, blue: 75.0/255, alpha: 1)]
         navigationController?.navigationBar.largeTitleTextAttributes = textAttributes as [NSAttributedString.Key : Any]
         navigationItem.title = "Feed"
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.largeTitleDisplayMode = .always
-        
     }
     
-    func configureCollectionView() {
-        collectionView = UICollectionView()
-        guard let collectionView = collectionView else {return}
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(collectionView)
-        NSLayoutConstraint.activate([collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor), collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10), collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor), collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor)])
-        collectionView.register(UINib(nibName: "TweetCell", bundle: nil), forCellWithReuseIdentifier: "TweetCellID")
-        collectionView.delegate = self
-        collectionView.dataSource = self
+}
+
+extension FeedController: UITableViewDelegate{
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        //if tweets[indexPath.row][]
+        return nil
+    }
+
+    func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let tweetID = tweets[indexPath.row].tweetID
+        let isFavorited = tweets[indexPath.row].favorited
+        if (!isFavorited) {
+            let favorAction = UIContextualAction(style: .normal, title: nil, handler: { _,_,_ in
+                TwitterService.swifter?.favoriteTweet(forID: tweetID)
+            })
+            favorAction.image = UIImage(systemName: "heart")
+            favorAction.backgroundColor = .systemPink
+            return UISwipeActionsConfiguration(actions: [favorAction])
+        }
+        else {
+            let unfavorAction = UIContextualAction(style: .normal, title: nil, handler: {_,_,_ in TwitterService.swifter?.unfavoriteTweet(forID: tweetID)
+            })
+            unfavorAction.image = UIImage(systemName: "heart.slash")
+            unfavorAction.backgroundColor = .systemPink
+            return UISwipeActionsConfiguration(actions: [unfavorAction])
+        }
+    }
+//    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+//        <#code#>
+//    }
+    
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 210
     }
 }
 
-extension FeedController: UICollectionViewDelegate, UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return jsonResult.count
+extension FeedController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return tweets.count
     }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "TweetCellID", for: indexPath) as! TweetCell
-        cell.userNameLabel.text = jsonResult[indexPath.row]["user"]["name"].string!
-        cell.tweetTextView.text = jsonResult[indexPath.row]["text"].string!
-        cell.userLoginLabel.text = jsonResult[indexPath.row]["user"]["screen_name"].string!
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "TweetID") as! TweetCell
+        cell.tweetView.layer.cornerRadius = 20
+        cell.textView.text = tweets[indexPath.row].text
+        cell.userNameLabel.text = tweets[indexPath.row].user.name
+        cell.screenNameLabel.text = "@" + tweets[indexPath.row].user.screenName
         return cell
     }
     

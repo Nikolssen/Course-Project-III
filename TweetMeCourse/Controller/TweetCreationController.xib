@@ -5,13 +5,13 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
-        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="TweetCreationController" customModule="TweetMeCourse" customModuleProvider="target">
             <connections>
                 <outlet property="postButton" destination="O4d-RE-OZ6" id="lwB-RA-YJL"/>
+                <outlet property="textViewHeight" destination="rgy-Bm-ffW" id="OgW-ru-HgP"/>
                 <outlet property="tweetTextView" destination="XY5-ki-7qO" id="Vt8-88-cdI"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
@@ -25,36 +25,40 @@
                     <rect key="frame" x="113.5" y="78" width="187" height="36"/>
                     <color key="tintColor" name="SecondaryColor"/>
                     <fontDescription key="fontDescription" type="boldSystem" pointSize="30"/>
-                    <color key="textColor" name="SecondaryColor"/>
+                    <color key="textColor" name="PrimaryColor"/>
                     <color key="highlightedColor" name="SecondaryColor"/>
                 </label>
-                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" keyboardDismissMode="onDrag" textAlignment="justified" translatesAutoresizingMaskIntoConstraints="NO" id="XY5-ki-7qO">
-                    <rect key="frame" x="40" y="139" width="334" height="537.5"/>
+                <textView clipsSubviews="YES" multipleTouchEnabled="YES" alpha="0.25" contentMode="scaleToFill" keyboardDismissMode="interactive" textAlignment="justified" translatesAutoresizingMaskIntoConstraints="NO" id="XY5-ki-7qO">
+                    <rect key="frame" x="40" y="139" width="334" height="400"/>
                     <color key="backgroundColor" name="BackgroundColor"/>
-                    <color key="textColor" systemColor="labelColor"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="400" id="rgy-Bm-ffW"/>
+                    </constraints>
+                    <color key="textColor" name="PrimaryColor"/>
                     <fontDescription key="fontDescription" type="system" pointSize="20"/>
                     <textInputTraits key="textInputTraits" autocapitalizationType="sentences" enablesReturnKeyAutomatically="YES"/>
                 </textView>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="O4d-RE-OZ6">
-                    <rect key="frame" x="60" y="708.5" width="294" height="41"/>
-                    <color key="backgroundColor" name="SecondaryColor"/>
+                    <rect key="frame" x="60" y="559" width="294" height="41"/>
+                    <color key="backgroundColor" name="PrimaryColor"/>
                     <fontDescription key="fontDescription" type="system" pointSize="24"/>
                     <color key="tintColor" name="PrimaryColor"/>
-                    <state key="normal" title="Post"/>
+                    <state key="normal" title="Post">
+                        <color key="titleColor" name="SecondaryColor"/>
+                    </state>
                     <connections>
                         <action selector="postAction:" destination="-1" eventType="touchUpInside" id="OOa-oc-Y2E"/>
                     </connections>
                 </button>
             </subviews>
             <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
-            <color key="backgroundColor" name="PrimaryColor"/>
+            <color key="backgroundColor" name="SecondaryColor"/>
             <constraints>
                 <constraint firstItem="O4d-RE-OZ6" firstAttribute="centerX" secondItem="fnl-2z-Ty3" secondAttribute="centerX" id="APA-qd-PP9"/>
                 <constraint firstItem="XY5-ki-7qO" firstAttribute="top" secondItem="fa4-nQ-8MN" secondAttribute="bottom" constant="25" id="CN9-Mc-eT7"/>
-                <constraint firstItem="O4d-RE-OZ6" firstAttribute="top" secondItem="XY5-ki-7qO" secondAttribute="bottom" constant="32" id="Gd4-P4-5Nd"/>
+                <constraint firstItem="O4d-RE-OZ6" firstAttribute="top" secondItem="XY5-ki-7qO" secondAttribute="bottom" constant="20" id="Gd4-P4-5Nd"/>
                 <constraint firstItem="fa4-nQ-8MN" firstAttribute="centerX" secondItem="fnl-2z-Ty3" secondAttribute="centerX" id="PYZ-CR-ve5"/>
                 <constraint firstItem="XY5-ki-7qO" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="40" id="edx-7v-Bnl"/>
-                <constraint firstItem="XY5-ki-7qO" firstAttribute="height" secondItem="i5M-Pr-FkT" secondAttribute="height" multiplier="0.6" id="maj-CZ-Q6c"/>
                 <constraint firstItem="O4d-RE-OZ6" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="80" id="oOR-gI-WG9">
                     <variation key="widthClass=compact" constant="60"/>
                 </constraint>
@@ -74,8 +78,5 @@
         <namedColor name="SecondaryColor">
             <color red="0.89800000190734863" green="0.10199999809265137" blue="0.29399999976158142" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
-        <systemColor name="labelColor">
-            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
     </resources>
 </document>
