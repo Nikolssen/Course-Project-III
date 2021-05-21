@@ -20,4 +20,9 @@ class TwitterService {
     static var userID: String?
 //    static var token: String?
 //    static var secretKey: String?
+    static let imageDownloader = ImageDownloader()
 }
+
+
+
+
