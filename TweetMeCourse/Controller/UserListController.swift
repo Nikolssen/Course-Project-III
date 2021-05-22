@@ -17,6 +17,13 @@ class UserListController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        if option == .followers {
+            navigationItem.title = "Followers"
+        }
+        else
+        {
+            navigationItem.title = "Following"
+        }
         self.clearsSelectionOnViewWillAppear = true
         tableView.register(UINib(nibName: "UserCell", bundle: nil), forCellReuseIdentifier: "UserCellID")
         
@@ -25,10 +32,11 @@ class UserListController: UITableViewController {
         switch option {
         case .followers:
             swifter.getUserFollowers(for: userTag, count: 20, skipStatus: true, includeUserEntities: false, success: {
-                json, _, _ in
+                json, response, _ in
                 self.users.append(contentsOf: User.array(of: json.array!))
                 self.tableView.reloadData()
                 self.requestSent = false
+                
             }, failure: {
                 _ in
                 self.requestSent = false
@@ -62,9 +70,18 @@ class UserListController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let user = users[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "UserCellID", for: indexPath) as! UserCell
+        var backgroundColor: UIColor
+        switch indexPath.row % 3 {
+        case 0:
+            backgroundColor = UIColor(named: "SpecialBlue")!
+        case 1:
+            backgroundColor = UIColor(named: "SpecialGreen")!
+        default:
+            backgroundColor = UIColor(named: "SpecialYellow")!
+        }
+        cell.contentView.backgroundColor = backgroundColor
         cell.set(name: user.name, screenName: user.screenName, verified: user.verified)
-        cell.userProfileImageView.image = UIImage(named: "UserIcon")
-        TwitterService.imageDownloader.loadImage(for: user.userPhotoLink){
+        TwitterService.imageDownloader?.loadImage(for: user.userPhotoLink){
             image in
             DispatchQueue.main.async {
                 cell.userProfileImageView.image = image
@@ -81,7 +98,23 @@ class UserListController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 200
+        return 70
+    }
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+//        if (scrollView.contentOffset.y + scrollView.frame.size.height) > scrollView.contentSize.height {
+//            guard let swifter = TwitterService.swifter, users.count > 0, !requestSent else
+//            {return}
+//            requestSent = true
+//            swifter.getUserFollowing(for: userTag, cursor: <#T##String?#>, count: <#T##Int?#>, skipStatus: <#T##Bool?#>, includeUserEntities: <#T##Bool?#>, success: <#T##Swifter.CursorSuccessHandler?##Swifter.CursorSuccessHandler?##(JSON, String?, String?) -> Void#>, failure: <#T##Swifter.FailureHandler?##Swifter.FailureHandler?##(Error) -> Void#>)
+//            swifter.getHomeTimeline(count: 10, maxID: tweets.last?.tweetID, success: {[weak self] json in
+//                if var array = json.array {
+//                    array.remove(at: 0)
+//                    self?.tweets.append(contentsOf: Tweet.array(of: array))
+//                    self?.collectionView.reloadData()
+//                    self?.requestSend = false
+//                }
+//            }, failure: {[weak self] _ in self?.requestSend = false})
+//        }
     }
     
     init(userTag:UserTag, option: UserListOption) {

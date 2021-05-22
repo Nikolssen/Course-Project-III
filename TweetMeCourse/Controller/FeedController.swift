@@ -36,30 +36,23 @@ class FeedController: UICollectionViewController {
             }
             self?.requestSend = false
         }, failure: {[weak self] _ in self?.requestSend = false})
-    
-    }
-    func configureUI(){
         
-
- 
-       
     }
     
     @objc func refresh() {
         self.collectionView.refreshControl?.beginRefreshing()
-            if let first = tweets.first, let swifter = TwitterService.swifter {
-                swifter.getHomeTimeline(count: nil, sinceID: first.tweetID, success: {json in
-                    print(json)
-                    let newTweets = Tweet.array(of: json.array!)
-                    self.tweets.insert(contentsOf: newTweets, at: 0)
-                    self.collectionView.refreshControl?.endRefreshing()
-                    self.collectionView.reloadData()
-                    self.requestSend = false
-                    
-                }, failure: {_ in self.collectionView.refreshControl?.endRefreshing()})
-            }
-        
+        if let first = tweets.first, let swifter = TwitterService.swifter {
+            swifter.getHomeTimeline(count: nil, sinceID: first.tweetID, success: {json in
+                let newTweets = Tweet.array(of: json.array!)
+                self.tweets.insert(contentsOf: newTweets, at: 0)
+                self.collectionView.refreshControl?.endRefreshing()
+                self.collectionView.reloadData()
+                self.requestSend = false
+                
+            }, failure: {_ in self.collectionView.refreshControl?.endRefreshing()})
         }
+        
+    }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.navigationBar.largeTitleTextAttributes = [.foregroundColor: UIColor.black, .font: UIFont(name: "Gill Sans Bold", size: 30) as Any]
@@ -104,8 +97,7 @@ extension FeedController
         cell.delegate = self
         cell.userID = tweet.user.id
         cell.tweetID = tweet.tweetID
-        cell.profileImageView.image = UIImage(named: "UserIcon")
-        TwitterService.imageDownloader.loadImage(for: tweet.user.userPhotoLink){
+        TwitterService.imageDownloader?.loadImage(for: tweet.user.userPhotoLink){
             image in
             DispatchQueue.main.async {
                 cell.profileImageView.image = image
@@ -143,7 +135,7 @@ extension FeedController: UICollectionViewDelegateFlowLayout {
         measureLabel.lineBreakMode = .byCharWrapping
         measureLabel.translatesAutoresizingMaskIntoConstraints = false
         measureLabel.widthAnchor.constraint(equalToConstant: (width - 80)).isActive = true
-        let height = measureLabel.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height + 70
+        let height = measureLabel.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height + 90
         
         return CGSize(width: width, height: height)
     }
@@ -167,26 +159,42 @@ extension FeedController: TweetCellDelegate{
         guard let swifter = TwitterService.swifter, let id = tweetID else {
             return
         }
-        
-        swifter.retweetTweet(forID: id, success: {
-            json in
-            
-        })
-        if (!requestSend) {
-            requestSend = true
-            swifter.getHomeTimeline(count: nil, sinceID: tweets.first!.tweetID, success: { json in
+        var newTweet: Tweet? = nil
+        for searchedTweet in tweets {
+            if searchedTweet.tweetID == tweetID {
+                newTweet = searchedTweet
                 
-                let newTweets = Tweet.array(of: json.array!)
-                self.tweets.insert(contentsOf: newTweets, at: 0)
-                self.collectionView.reloadData()
-                self.requestSend = false
+            }
+        }
+        guard let tweet = newTweet else {return}
+        if !tweet.retweeted{
+            swifter.retweetTweet(forID: id, success: {_ in
+                for i in 0..<self.tweets.count {
+                    if self.tweets[i].tweetID == tweetID{
+                        self.tweets[i].retweeted = true
+                        self.collectionView.reloadData()
+                        break
+                    }
+                }
+            })
+        }
+        else
+        {
+            swifter.unretweetTweet(forID: id, success: {_ in
+                for i in 0..<self.tweets.count {
+                    if self.tweets[i].tweetID == tweetID{
+                        self.tweets[i].retweeted = false
+                        self.collectionView.reloadData()
+                        break
+                    }
+                }
             })
         }
         
     }
     
     func likeButtonTapped(tweetID: String?, sender: TweetCell) {
-        guard let tweetID = tweetID else {
+        guard let tweetID = tweetID, let swifter = TwitterService.swifter else {
             return
         }
         var newTweet: Tweet? = nil
@@ -196,12 +204,13 @@ extension FeedController: TweetCellDelegate{
                 
             }
         }
-        guard let tweet = newTweet, let swifter = TwitterService.swifter else {return}
+        guard let tweet = newTweet else {return}
         if !tweet.favorited{
             swifter.favoriteTweet(forID: tweetID, success: {_ in
                 for i in 0..<self.tweets.count {
                     if self.tweets[i].tweetID == tweetID{
                         self.tweets[i].favorited = true
+                        self.collectionView.reloadData()
                         break
                     }
                 }
@@ -210,9 +219,12 @@ extension FeedController: TweetCellDelegate{
         else
         {
             swifter.unfavoriteTweet(forID: tweetID, success: {_ in
-                for i in 0..<self.tweets.count {
-                    if self.tweets[i].tweetID == tweetID{
-                        self.tweets[i].favorited = true
+                for i in 0..<self.tweets.count
+                {
+                    if self.tweets[i].tweetID == tweetID
+                    {
+                        self.tweets[i].favorited = false
+                        self.collectionView.reloadData()
                         break
                     }
                 }

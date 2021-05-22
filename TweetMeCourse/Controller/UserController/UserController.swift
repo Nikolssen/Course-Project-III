@@ -33,12 +33,21 @@ class UserController: UIViewController {
         super.viewDidLoad()
         collectionView.delegate = self
         collectionView.dataSource = self
-        configureUI()
+        collectionView?.backgroundColor = UIColor(named: "BackgroundColor")
+        followsButton.layer.cornerRadius = 30/2
+        followersButton.layer.cornerRadius = 30/2
+        followButton.layer.cornerRadius = 30/2
+        
         userProfileImageView.contentMode = .scaleAspectFit
         userProfileImageView.clipsToBounds = true
         userProfileImageView.layer.cornerRadius = 90/2
         userProfileImageView.backgroundColor = .white
         collectionView?.register(TweetCell.self, forCellWithReuseIdentifier: "TweetCellID")
+        let refresher = UIRefreshControl()
+        self.collectionView.alwaysBounceVertical = true
+        refresher.addTarget(self, action: #selector(refresh), for: .valueChanged)
+        self.collectionView.refreshControl = refresher
+        
         guard let swifter = TwitterService.swifter else {return}
         swifter.showUser(userTag, success: {[weak self]
             json in
@@ -47,14 +56,23 @@ class UserController: UIViewController {
                 {
                     self?.set(name: user.name, verified: user.verified)
                     self?.screenNameLabel.text = "@\(user.screenName)"
-                    self?.navigationController?.navigationItem.title = "@\(user.screenName)"
-                    TwitterService.imageDownloader.loadImage(for: user.userPhotoLink, completion: {image in
+                    self?.navigationItem.title = "@\(user.screenName)"
+                    let largePhotoLink = user.userPhotoLink.replacingOccurrences(of: "_normal", with: "")
+                    TwitterService.imageDownloader?.loadImage(for: largePhotoLink, completion: {image in
                         DispatchQueue.main.async {
                             self?.userProfileImageView.image = image
                         }
                     })
-                    self?.followersButton.titleLabel?.text = "Followers: \(self?.user?.followersCount ?? 0)"
-                    print(json)
+                    
+                    if user.id == TwitterService.userID {
+                        self?.followButton.setTitle("Logout", for: .normal)
+                    }
+                    else
+                    {
+                        if user.following {
+                            self?.followButton.setTitle("Unfollow", for: .normal)
+                        }
+                    }
                 }
         })
         
@@ -72,14 +90,13 @@ class UserController: UIViewController {
         })
     }
 
-    func configureUI(){
-        view.backgroundColor = UIColor(named: "BackgroundColor")
+    override func viewWillAppear(_ animated: Bool)
+    {
+        super.viewWillAppear(animated)
         navigationController?.navigationBar.prefersLargeTitles = false
         navigationItem.largeTitleDisplayMode = .never
-        collectionView?.backgroundColor = UIColor(named: "BackgroundColor")
-        followsButton.layer.cornerRadius = 30/2
-        followersButton.layer.cornerRadius = 30/2
-        followButton.layer.cornerRadius = 30/2
+
+
     
     }
     
@@ -94,7 +111,7 @@ class UserController: UIViewController {
     
     func set(name: String, verified: Bool) {
         if verified {
-            let fullString = NSMutableAttributedString(string:"\(name) ", attributes: [.font : UIFont.boldSystemFont(ofSize: 14), .foregroundColor: UIColor(named: "PrimaryColor")!])
+            let fullString = NSMutableAttributedString(string:"\(name) ", attributes: [.font : UIFont(name: "Gill Sans Bold", size: 19)!, .foregroundColor: UIColor.black])
                 let imageAttachment = NSTextAttachment()
                 imageAttachment.image = UIImage(systemName: "checkmark")
                 fullString.append(NSAttributedString(attachment: imageAttachment))
@@ -114,9 +131,48 @@ class UserController: UIViewController {
     }
     
     @IBAction func followAction(_ sender: Any) {
-        if let user = user, user.following {
+        guard let swifter = TwitterService.swifter, let user = user else {return}
+        if user.id == TwitterService.userID {
+            let userDefaults = UserDefaults.standard
+            userDefaults.removeObject(forKey: "oauth_token")
+            userDefaults.removeObject(forKey: "oauth_token_secret")
+            userDefaults.removeObject(forKey: "user_id")
+            TwitterService.imageDownloader = ImageDownloader()
+            view.window?.rootViewController = LoginController()
+            return
         }
+        
+        if  user.following {
+            swifter.unfollowUser(userTag, success: {
+                json in
+                self.followButton.setTitle("Follow", for: .normal)
+            }, failure: nil)
+            return
+        }
+        
+        if !user.following {
+            swifter.followUser(userTag, success: {
+                json in
+                self.followButton.setTitle("Unfollow", for: .normal)
+            })
+        }
+
     }
+    
+    @objc func refresh() {
+        self.collectionView.refreshControl?.beginRefreshing()
+            if let first = userTweets.first, let swifter = TwitterService.swifter {
+                swifter.getTimeline(for: userTag, sinceID: first.tweetID, success: {json in
+                    let newTweets = Tweet.array(of: json.array!)
+                    self.userTweets.insert(contentsOf: newTweets, at: 0)
+                    self.collectionView.refreshControl?.endRefreshing()
+                    self.collectionView.reloadData()
+                    self.requestSend = false
+                    
+                }, failure: {_ in self.collectionView.refreshControl?.endRefreshing()})
+            }
+        
+        }
 }
 
 extension UserController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
@@ -130,6 +186,16 @@ extension UserController: UICollectionViewDelegate, UICollectionViewDataSource, 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "TweetCellID", for: indexPath) as! TweetCell
         let tweet = userTweets[indexPath.item]
+        var backgroundColor: UIColor
+        switch indexPath.item % 3 {
+        case 0:
+            backgroundColor = UIColor(named: "SpecialBlue")!
+        case 1:
+            backgroundColor = UIColor(named: "SpecialGreen")!
+        default:
+            backgroundColor = UIColor(named: "SpecialYellow")!
+        }
+        cell.backgroundColor = backgroundColor
         cell.setInfoLabel(name: tweet.user.name, screenName: tweet.user.screenName, verified: tweet.user.verified)
         cell.setTweetText(text: tweet.text)
         cell.setLike(tweet.favorited)
@@ -137,8 +203,8 @@ extension UserController: UICollectionViewDelegate, UICollectionViewDataSource, 
         cell.delegate = self
         cell.userID = tweet.user.id
         cell.tweetID = tweet.tweetID
-        cell.profileImageView.image = UIImage(named: "UserIcon")
-        TwitterService.imageDownloader.loadImage(for: tweet.user.userPhotoLink){
+        
+        TwitterService.imageDownloader?.loadImage(for: tweet.user.userPhotoLink){
             image in
             DispatchQueue.main.async {
                 cell.profileImageView.image = image
@@ -169,11 +235,11 @@ extension UserController: UICollectionViewDelegate, UICollectionViewDataSource, 
         let measureLabel = UILabel()
         measureLabel.text = userTweets[indexPath.item].text
         measureLabel.numberOfLines = 0
-        measureLabel.font = UIFont.systemFont(ofSize: 14)
+        measureLabel.font = UIFont(name: "Gill Sans", size: 16)
         measureLabel.lineBreakMode = .byCharWrapping
         measureLabel.translatesAutoresizingMaskIntoConstraints = false
         measureLabel.widthAnchor.constraint(equalToConstant: (width - 80)).isActive = true
-        let height = measureLabel.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height + 70
+        let height = measureLabel.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height + 90
         
         return CGSize(width: width, height: height)
     }
@@ -190,12 +256,83 @@ extension UserController: TweetCellDelegate{
     }
     
     func retweetButtonTapped(tweetID: String?, sender: TweetCell) {
+        guard let swifter = TwitterService.swifter, let id = tweetID else {
+            return
+        }
+        var newTweet: Tweet? = nil
+        for searchedTweet in userTweets {
+            if searchedTweet.tweetID == tweetID {
+                newTweet = searchedTweet
+                
+            }
+        }
+        guard let tweet = newTweet else {return}
+        if !tweet.retweeted{
+            swifter.retweetTweet(forID: id, success: {_ in
+                for i in 0..<self.userTweets.count {
+                    if self.userTweets[i].tweetID == tweetID{
+                        self.userTweets[i].retweeted = true
+                        self.collectionView.reloadData()
+                        break
+                    }
+                }
+            })
+        }
+        else
+        {
+            swifter.unretweetTweet(forID: id, success: {_ in
+                for i in 0..<self.userTweets.count {
+                    if self.userTweets[i].tweetID == tweetID{
+                        self.userTweets[i].retweeted = false
+                        self.collectionView.reloadData()
+                        break
+                    }
+                }
+            })
+        }
         
     }
     
     func likeButtonTapped(tweetID: String?, sender: TweetCell) {
+        guard let tweetID = tweetID, let swifter = TwitterService.swifter else {
+            return
+        }
+        var newTweet: Tweet? = nil
+        for searchedTweet in self.userTweets {
+            if searchedTweet.tweetID == tweetID {
+                newTweet = searchedTweet
+                
+            }
+        }
+        guard let tweet = newTweet else {return}
+        if !tweet.favorited{
+            swifter.favoriteTweet(forID: tweetID, success: {_ in
+                for i in 0..<self.userTweets.count {
+                    if self.userTweets[i].tweetID == tweetID{
+                        self.userTweets[i].favorited = true
+                        self.collectionView.reloadData()
+                        break
+                    }
+                }
+            })
+        }
+        else
+        {
+            swifter.unfavoriteTweet(forID: tweetID, success: {_ in
+                for i in 0..<self.userTweets.count
+                {
+                    if self.userTweets[i].tweetID == tweetID
+                    {
+                        self.userTweets[i].favorited = false
+                        self.collectionView.reloadData()
+                        break
+                    }
+                 }
+            })
+        }
         
     }
+
     
     
 }

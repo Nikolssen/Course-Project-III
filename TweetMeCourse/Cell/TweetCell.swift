@@ -62,7 +62,7 @@ class TweetCell: UICollectionViewCell {
         textLabel.font = UIFont(name: "Gill Sans", size: 16)
         
         let actionStack = UIStackView(arrangedSubviews: [likeButton, retweetButton])
-        actionStack.distribution = .equalCentering
+        actionStack.distribution = .fillEqually
         actionStack.axis = .horizontal
         actionStack.spacing = 30
         addSubview(actionStack)
@@ -74,14 +74,17 @@ class TweetCell: UICollectionViewCell {
     
         let likeTap = UITapGestureRecognizer(target: self, action: #selector(likeButtonTapped))
         likeButton.addGestureRecognizer(likeTap)
+        likeButton.tintColor = .black
         
         let retweetTap = UITapGestureRecognizer(target: self, action: #selector(retweetButtonTapped))
         retweetButton.addGestureRecognizer(retweetTap)
+        retweetButton.tintColor = .black
+        
     }
     func setInfoLabel(name: String, screenName: String, verified: Bool = false) {
         
         
-        let fullString = NSMutableAttributedString(string:"\(name) ", attributes: [.font : UIFont(name: "Gill Sans", size: 18), .foregroundColor: UIColor.black])
+        let fullString = NSMutableAttributedString(string:"\(name) ", attributes: [.font : UIFont(name: "Gill Sans", size: 18)!, .foregroundColor: UIColor.black])
         if (verified) {
             let imageAttachment = NSTextAttachment()
             imageAttachment.image = UIImage(systemName: "checkmark")
@@ -99,19 +102,27 @@ class TweetCell: UICollectionViewCell {
     
     func setLike(_ isLiked: Bool) {
         if isLiked {
-            likeButton.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+            let imageConfiguration = UIImage.SymbolConfiguration(weight: .heavy)
+            let image = UIImage(systemName: "heart.fill", withConfiguration: imageConfiguration)
+            likeButton.setImage(image, for: .normal)
         }
         else {
-            likeButton.setImage(UIImage(systemName: "heart"), for: .normal)
+            let imageConfiguration = UIImage.SymbolConfiguration(weight: .light)
+            let image = UIImage(systemName: "heart", withConfiguration: imageConfiguration)
+            likeButton.setImage(image, for: .normal)
         }
     }
     
     func setRetweeted(_ isRetweeted: Bool) {
         if !isRetweeted {
-            retweetButton.setImage(UIImage(systemName: "arrow.2.squarepath"), for: .normal)
+            let imageConfiguration = UIImage.SymbolConfiguration(weight: .light)
+            let image = UIImage(systemName: "arrow.2.squarepath", withConfiguration: imageConfiguration)
+            retweetButton.setImage(image, for: .normal)
         }
         else {
-            retweetButton.isHidden = true
+            let imageConfiguration = UIImage.SymbolConfiguration(weight: .heavy)
+            let image = UIImage(systemName: "arrow.2.squarepath", withConfiguration: imageConfiguration)
+            retweetButton.setImage(image, for: .normal)
         }
     }
     

@@ -50,7 +50,6 @@ struct ExtendedUser {
   //  let creationDate: String
     let followersCount: Int
     let following: Bool
-    let followRequestSent: Bool
     
     init?(json: JSON){
         guard let screenName = json["screen_name"].string,
@@ -60,8 +59,7 @@ struct ExtendedUser {
               let verified = json["verified"].bool,
        //       let creationDateString = json["created_at"].string,
               let followersCount = json["followers_count"].integer,
-              let following = json["following"].bool,
-              let followRequestSent = json["follow_request_sent"].bool
+              let following = json["following"].bool
         else {return nil}
 //        let dateFormatter = DateFormatter()
 //        dateFormatter.dateFormat = "EEE MMM d HH:mm:ss Z yyyy"
@@ -76,7 +74,7 @@ struct ExtendedUser {
         self.verified = verified
         self.followersCount = followersCount
         self.following = following
-        self.followRequestSent = followRequestSent
+
        // self.creationDate =
     }
 }

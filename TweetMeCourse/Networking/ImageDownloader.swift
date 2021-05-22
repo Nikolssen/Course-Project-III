@@ -34,7 +34,6 @@ class ImageDownloader {
             self?.operations.removeValue(forKey: url)
         })
         self.queue.addOperation(operation)
-    }
-
+    }   
     
 }

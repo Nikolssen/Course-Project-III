@@ -33,14 +33,11 @@ class MainTabBarController: UITabBarController {
         let feedVC = FeedController(collectionViewLayout: UICollectionViewFlowLayout())
         let feedNav = navigationControllerWrapper(for: feedVC, image: UIImage(systemName: "house", withConfiguration: unselectedImageConfiguration), selectedImage: UIImage(systemName:  "house.fill", withConfiguration: selectedImageConfiguration))
         feedNav.tabBarItem.title = "Feed"
-        
-        let searchNav = navigationControllerWrapper(for: ExploreController(), image: UIImage(systemName: "magnifyingglass", withConfiguration: unselectedImageConfiguration), selectedImage: UIImage(systemName:  "magnifyingglass", withConfiguration: selectedImageConfiguration))
-        searchNav.tabBarItem.title = "Explore"
 
         let userNav = navigationControllerWrapper(for: UserController(userID: TwitterService.userID!, nibName: "UserController", bundle: nil), image: UIImage(systemName: "person", withConfiguration: unselectedImageConfiguration), selectedImage: UIImage(systemName:  "person.fill", withConfiguration: selectedImageConfiguration))
         userNav.tabBarItem.title = "My profile"
         
-        viewControllers = [feedNav, searchNav, userNav]
+        viewControllers = [feedNav, userNav]
         configureActionButton()
         
     }

@@ -18,9 +18,7 @@ class TwitterService {
 
     static var swifter: Swifter?
     static var userID: String?
-//    static var token: String?
-//    static var secretKey: String?
-    static let imageDownloader = ImageDownloader()
+    static var imageDownloader: ImageDownloader? = ImageDownloader()
 }
 
 
