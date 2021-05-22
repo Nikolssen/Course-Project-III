@@ -1,0 +1,101 @@
+//
+//  UserListController.swift
+//  TweetMeCourse
+//
+//  Created by Admin on 22.05.2021.
+//
+
+import UIKit
+import Swifter
+
+class UserListController: UITableViewController {
+
+    private let option: UserListOption
+    private let userTag: UserTag
+    private var users = [User]()
+    private var requestSent = false
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.clearsSelectionOnViewWillAppear = true
+        tableView.register(UINib(nibName: "UserCell", bundle: nil), forCellReuseIdentifier: "UserCellID")
+        
+        guard let swifter = TwitterService.swifter else {return}
+        requestSent = true
+        switch option {
+        case .followers:
+            swifter.getUserFollowers(for: userTag, count: 20, skipStatus: true, includeUserEntities: false, success: {
+                json, _, _ in
+                self.users.append(contentsOf: User.array(of: json.array!))
+                self.tableView.reloadData()
+                self.requestSent = false
+            }, failure: {
+                _ in
+                self.requestSent = false
+            })
+            
+        case .following:
+            swifter.getUserFollowing(for: userTag, count: 20, skipStatus: true, includeUserEntities: false, success: {
+                json, _, _ in
+                self.users.append(contentsOf: User.array(of: json.array!))
+                self.tableView.reloadData()
+                self.requestSent = false
+            }, failure: {
+                _ in
+                self.requestSent = false
+            })
+        }
+        
+    }
+
+    // MARK: - Table view data source
+
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return users.count
+    }
+
+    
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let user = users[indexPath.row]
+        let cell = tableView.dequeueReusableCell(withIdentifier: "UserCellID", for: indexPath) as! UserCell
+        cell.set(name: user.name, screenName: user.screenName, verified: user.verified)
+        cell.userProfileImageView.image = UIImage(named: "UserIcon")
+        TwitterService.imageDownloader.loadImage(for: user.userPhotoLink){
+            image in
+            DispatchQueue.main.async {
+                cell.userProfileImageView.image = image
+            }
+        }
+
+        return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let user = users[indexPath.row]
+        let userVC = UserController(userID: user.id, nibName: "UserController", bundle: nil)
+        navigationController?.pushViewController(userVC, animated: true)
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 200
+    }
+    
+    init(userTag:UserTag, option: UserListOption) {
+        self.userTag = userTag
+        self.option = option
+        super.init(style: .plain)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    enum UserListOption {
+        case followers
+        case following
+    }
+}

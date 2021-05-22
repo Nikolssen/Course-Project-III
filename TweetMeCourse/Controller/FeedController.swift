@@ -12,12 +12,19 @@ private let reuseIdentifier = "TweetCellID"
 class FeedController: UICollectionViewController {
     var tweets = [Tweet]()
     var requestSend: Bool = false
+    var refresher: UIRefreshControl!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureUI()
+        
         self.clearsSelectionOnViewWillAppear = false
         self.collectionView!.register(TweetCell.self, forCellWithReuseIdentifier: reuseIdentifier)
-        
+        view.backgroundColor = UIColor(named: "BackgroundColor")
+        self.refresher = UIRefreshControl()
+        self.collectionView.alwaysBounceVertical = true
+        self.refresher.addTarget(self, action: #selector(refresh), for: .valueChanged)
+        self.collectionView.refreshControl = refresher
+        collectionView?.backgroundColor = UIColor(named: "BackgroundColor")
         
         guard let swifter = TwitterService.swifter else
         {return}
@@ -28,55 +35,84 @@ class FeedController: UICollectionViewController {
                 self?.collectionView.reloadData()
             }
             self?.requestSend = false
-            print(json)
         }, failure: {[weak self] _ in self?.requestSend = false})
+    
     }
-        func configureUI(){
-            view.backgroundColor = UIColor(named: "BackgroundColor")
-            let textAttributes = [NSAttributedString.Key.foregroundColor: UIColor(red: 229.0/255, green: 26.0/255, blue: 75.0/255, alpha: 1)]
-            navigationController?.navigationBar.largeTitleTextAttributes = textAttributes as [NSAttributedString.Key : Any]
-            navigationItem.title = "Feed"
-            navigationController?.navigationBar.prefersLargeTitles = true
-            navigationItem.largeTitleDisplayMode = .always
-            collectionView?.backgroundColor = UIColor(named: "BackgroundColor")
+    func configureUI(){
+        
+
+ 
+       
+    }
+    
+    @objc func refresh() {
+        self.collectionView.refreshControl?.beginRefreshing()
+            if let first = tweets.first, let swifter = TwitterService.swifter {
+                swifter.getHomeTimeline(count: nil, sinceID: first.tweetID, success: {json in
+                    print(json)
+                    let newTweets = Tweet.array(of: json.array!)
+                    self.tweets.insert(contentsOf: newTweets, at: 0)
+                    self.collectionView.refreshControl?.endRefreshing()
+                    self.collectionView.reloadData()
+                    self.requestSend = false
+                    
+                }, failure: {_ in self.collectionView.refreshControl?.endRefreshing()})
+            }
+        
         }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.navigationBar.largeTitleTextAttributes = [.foregroundColor: UIColor.black, .font: UIFont(name: "Gill Sans Bold", size: 30) as Any]
+        navigationItem.title = "Feed"
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.largeTitleDisplayMode = .always
+    }
 }
 
 // MARK: UICollectionViewDataSource
 extension FeedController
 {
-
- 
- override func numberOfSections(in collectionView: UICollectionView) -> Int {
-
- return 1
- }
- 
- 
- override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
- 
-    return tweets.count
- }
- 
- override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
- let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! TweetCell
-    let tweet = tweets[indexPath.item]
-    cell.setInfoLabel(name: tweet.user.name, screenName: tweet.user.screenName, verified: tweet.user.verified)
-    cell.setTweetText(text: tweet.text)
-    cell.setLike(tweet.favorited)
-    cell.setRetweeted(tweet.retweeted)
-    cell.delegate = self
-    cell.userID = tweet.user.id
-    cell.tweetID = tweet.tweetID
-    cell.profileImageView.image = UIImage(named: "UserIcon")
-    TwitterService.imageDownloader.loadImage(for: tweet.user.userPhotoLink){
-        image in
-        DispatchQueue.main.async {
-            cell.profileImageView.image = image
-        }
+    
+    override func numberOfSections(in collectionView: UICollectionView) -> Int {
+        
+        return 1
     }
- return cell
- }
+    
+    
+    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        
+        return tweets.count
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! TweetCell
+        let tweet = tweets[indexPath.item]
+        var backgroundColor: UIColor
+        switch indexPath.item % 3 {
+        case 0:
+            backgroundColor = UIColor(named: "SpecialBlue")!
+        case 1:
+            backgroundColor = UIColor(named: "SpecialGreen")!
+        default:
+            backgroundColor = UIColor(named: "SpecialYellow")!
+        }
+        cell.backgroundColor = backgroundColor
+        cell.setInfoLabel(name: tweet.user.name, screenName: tweet.user.screenName, verified: tweet.user.verified)
+        cell.setTweetText(text: tweet.text)
+        cell.setLike(tweet.favorited)
+        cell.setRetweeted(tweet.retweeted)
+        cell.delegate = self
+        cell.userID = tweet.user.id
+        cell.tweetID = tweet.tweetID
+        cell.profileImageView.image = UIImage(named: "UserIcon")
+        TwitterService.imageDownloader.loadImage(for: tweet.user.userPhotoLink){
+            image in
+            DispatchQueue.main.async {
+                cell.profileImageView.image = image
+            }
+        }
+        return cell
+    }
     
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if (scrollView.contentOffset.y + scrollView.frame.size.height) > scrollView.contentSize.height {
@@ -103,11 +139,11 @@ extension FeedController: UICollectionViewDelegateFlowLayout {
         let measureLabel = UILabel()
         measureLabel.text = tweets[indexPath.item].text
         measureLabel.numberOfLines = 0
-        measureLabel.font = UIFont.systemFont(ofSize: 14)
+        measureLabel.font = UIFont(name: "Gill Sans", size: 16)
         measureLabel.lineBreakMode = .byCharWrapping
         measureLabel.translatesAutoresizingMaskIntoConstraints = false
         measureLabel.widthAnchor.constraint(equalToConstant: (width - 80)).isActive = true
-        let height = measureLabel.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height + 50
+        let height = measureLabel.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height + 70
         
         return CGSize(width: width, height: height)
     }
@@ -116,7 +152,7 @@ extension FeedController: UICollectionViewDelegateFlowLayout {
         return UIEdgeInsets(top: 30, left: 10, bottom: 30, right: 10)
     }
     
-
+    
 }
 extension FeedController: TweetCellDelegate{
     func userImageTapped(userID: String?) {
@@ -128,19 +164,60 @@ extension FeedController: TweetCellDelegate{
     }
     
     func retweetButtonTapped(tweetID: String?, sender: TweetCell) {
-
+        guard let swifter = TwitterService.swifter, let id = tweetID else {
+            return
+        }
+        
+        swifter.retweetTweet(forID: id, success: {
+            json in
+            
+        })
+        if (!requestSend) {
+            requestSend = true
+            swifter.getHomeTimeline(count: nil, sinceID: tweets.first!.tweetID, success: { json in
+                
+                let newTweets = Tweet.array(of: json.array!)
+                self.tweets.insert(contentsOf: newTweets, at: 0)
+                self.collectionView.reloadData()
+                self.requestSend = false
+            })
+        }
+        
     }
     
     func likeButtonTapped(tweetID: String?, sender: TweetCell) {
         guard let tweetID = tweetID else {
             return
         }
-        guard let swifter = TwitterService.swifter else {return}
-        swifter.favoriteTweet(forID: tweetID, success: {json in
-            print(json)
-            sender.setLike(true)
-        })
+        var newTweet: Tweet? = nil
+        for searchedTweet in tweets {
+            if searchedTweet.tweetID == tweetID {
+                newTweet = searchedTweet
+                
+            }
+        }
+        guard let tweet = newTweet, let swifter = TwitterService.swifter else {return}
+        if !tweet.favorited{
+            swifter.favoriteTweet(forID: tweetID, success: {_ in
+                for i in 0..<self.tweets.count {
+                    if self.tweets[i].tweetID == tweetID{
+                        self.tweets[i].favorited = true
+                        break
+                    }
+                }
+            })
+        }
+        else
+        {
+            swifter.unfavoriteTweet(forID: tweetID, success: {_ in
+                for i in 0..<self.tweets.count {
+                    if self.tweets[i].tweetID == tweetID{
+                        self.tweets[i].favorited = true
+                        break
+                    }
+                }
+            })
+        }
+        
     }
-    
-    
 }

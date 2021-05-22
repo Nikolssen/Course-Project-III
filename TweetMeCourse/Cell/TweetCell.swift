@@ -19,8 +19,6 @@ class TweetCell: UICollectionViewCell {
         imageView.layer.cornerRadius = 48/2
         imageView.backgroundColor = .white
         imageView.isUserInteractionEnabled = true
-        let tap = UITapGestureRecognizer(target: self, action: #selector(userImageTapped))
-        imageView.addGestureRecognizer(tap)
         return imageView
     }()
     
@@ -37,9 +35,10 @@ class TweetCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = UIColor(named: "SecondaryColor")
         addSubview(profileImageView)
-        
+        let tap = UITapGestureRecognizer(target: self, action: #selector(userImageTapped))
+        tap.numberOfTapsRequired = 1
+        profileImageView.addGestureRecognizer(tap)
         profileImageView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([profileImageView.topAnchor.constraint(equalTo: topAnchor, constant: 12),
         profileImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),
@@ -59,7 +58,8 @@ class TweetCell: UICollectionViewCell {
         
         self.layer.cornerRadius = 20
         
-        textLabel.textColor = UIColor(named: "PrimaryColor")
+        textLabel.textColor = .black
+        textLabel.font = UIFont(name: "Gill Sans", size: 16)
         
         let actionStack = UIStackView(arrangedSubviews: [likeButton, retweetButton])
         actionStack.distribution = .equalCentering
@@ -81,21 +81,20 @@ class TweetCell: UICollectionViewCell {
     func setInfoLabel(name: String, screenName: String, verified: Bool = false) {
         
         
-        let fullString = NSMutableAttributedString(string:"\(name) ", attributes: [.font : UIFont.boldSystemFont(ofSize: 14), .foregroundColor: UIColor(named: "PrimaryColor")!])
+        let fullString = NSMutableAttributedString(string:"\(name) ", attributes: [.font : UIFont(name: "Gill Sans", size: 18), .foregroundColor: UIColor.black])
         if (verified) {
             let imageAttachment = NSTextAttachment()
             imageAttachment.image = UIImage(systemName: "checkmark")
             fullString.append(NSAttributedString(attachment: imageAttachment))
         }
         fullString.append(NSAttributedString(string: " @\(screenName)", attributes: [.font:            UIFont.systemFont(ofSize: 14),
-             .foregroundColor: UIColor.lightGray]))
+             .foregroundColor: UIColor.darkGray]))
         
         infoLabel.attributedText = fullString
     }
     
     func setTweetText(text: String) {
         textLabel.text = text
-        print(textLabel.frame.width)
     }
     
     func setLike(_ isLiked: Bool) {

@@ -15,8 +15,8 @@ class MainTabBarController: UITabBarController {
     
     let actionButton: UIButton = {
         let button = UIButton(type: .system)
-        button.tintColor = UIColor(named: "SecondaryColor")
-        button.backgroundColor = UIColor(named: "PrimaryColor")
+        button.tintColor = .black
+        button.backgroundColor = UIColor(named: "SpecialBlue")
         button.setImage(UIImage(systemName: "note.text.badge.plus"), for: .normal)
         button.layer.cornerRadius = 25
         button.addTarget(self, action: #selector(actionButtonTapped), for: .touchUpInside)
@@ -25,18 +25,22 @@ class MainTabBarController: UITabBarController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tabBar.barTintColor = UIColor(named: "PrimaryColor")
+        tabBar.barTintColor = .white
         
         let unselectedImageConfiguration =
             UIImage.SymbolConfiguration(weight: .light)
-        let selectedImageConfiguration = UIImage.SymbolConfiguration(weight: .bold)
+        let selectedImageConfiguration = UIImage.SymbolConfiguration(weight: .heavy)
         let feedVC = FeedController(collectionViewLayout: UICollectionViewFlowLayout())
         let feedNav = navigationControllerWrapper(for: feedVC, image: UIImage(systemName: "house", withConfiguration: unselectedImageConfiguration), selectedImage: UIImage(systemName:  "house.fill", withConfiguration: selectedImageConfiguration))
+        feedNav.tabBarItem.title = "Feed"
         
         let searchNav = navigationControllerWrapper(for: ExploreController(), image: UIImage(systemName: "magnifyingglass", withConfiguration: unselectedImageConfiguration), selectedImage: UIImage(systemName:  "magnifyingglass", withConfiguration: selectedImageConfiguration))
+        searchNav.tabBarItem.title = "Explore"
+
+        let userNav = navigationControllerWrapper(for: UserController(userID: TwitterService.userID!, nibName: "UserController", bundle: nil), image: UIImage(systemName: "person", withConfiguration: unselectedImageConfiguration), selectedImage: UIImage(systemName:  "person.fill", withConfiguration: selectedImageConfiguration))
+        userNav.tabBarItem.title = "My profile"
         
-        let messageNav = navigationControllerWrapper(for: MessageMenuController(), image: UIImage(systemName: "envelope", withConfiguration: unselectedImageConfiguration), selectedImage: UIImage(systemName: "envelope.fill", withConfiguration: selectedImageConfiguration))
-        viewControllers = [feedNav, searchNav, messageNav]
+        viewControllers = [feedNav, searchNav, userNav]
         configureActionButton()
         
     }

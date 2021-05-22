@@ -11,8 +11,8 @@ import Swifter
 struct Tweet {
     let text: String
     let tweetID: String
-    let favorited: Bool
-    let retweeted: Bool
+    var favorited: Bool
+    var retweeted: Bool
     let user: User
 
     init?(json: JSON) {

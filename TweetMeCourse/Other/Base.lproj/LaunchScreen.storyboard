@@ -23,20 +23,20 @@
                                 </constraints>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="TweetMe" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Nuu-Zx-Zbe">
-                                <rect key="frame" x="137" y="590" width="140" height="38"/>
-                                <fontDescription key="fontDescription" name="Chalkduster" family="Chalkduster" pointSize="30"/>
-                                <color key="textColor" name="PrimaryColor"/>
+                                <rect key="frame" x="130" y="590" width="154" height="37.5"/>
+                                <fontDescription key="fontDescription" name="GillSans-Bold" family="Gill Sans" pointSize="32"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="An another Twitter client" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ztT-lJ-VVI">
-                                <rect key="frame" x="94.5" y="645" width="225.5" height="24"/>
-                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="20"/>
-                                <color key="textColor" name="PrimaryColor"/>
+                                <rect key="frame" x="100" y="644.5" width="214" height="24"/>
+                                <fontDescription key="fontDescription" name="GillSans" family="Gill Sans" pointSize="21"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
-                        <color key="backgroundColor" name="SecondaryColor"/>
+                        <color key="backgroundColor" name="SpecialGreen"/>
                         <constraints>
                             <constraint firstItem="ztT-lJ-VVI" firstAttribute="top" secondItem="Nuu-Zx-Zbe" secondAttribute="bottom" constant="17" id="64a-nh-MPV"/>
                             <constraint firstItem="Nuu-Zx-Zbe" firstAttribute="top" secondItem="NNl-2y-wxW" secondAttribute="bottom" constant="30" id="CJh-ZH-V0j"/>
@@ -54,12 +54,9 @@
         </scene>
     </scenes>
     <resources>
-        <image name="Logo" width="734.5" height="734.5"/>
-        <namedColor name="PrimaryColor">
-            <color red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </namedColor>
-        <namedColor name="SecondaryColor">
-            <color red="0.89800000190734863" green="0.10199999809265137" blue="0.29399999976158142" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        <image name="Logo" width="768.5" height="768.5"/>
+        <namedColor name="SpecialGreen">
+            <color red="0.86274509803921573" green="0.92941176470588238" blue="0.78431372549019607" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
     </resources>
 </document>

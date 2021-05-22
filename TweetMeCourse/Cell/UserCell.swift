@@ -9,17 +9,18 @@ import UIKit
 
 class UserCell: UITableViewCell {
 
-    @IBOutlet weak var userProfileImage: UIImageView!
+
+    @IBOutlet weak var userProfileImageView: UIImageView!
     @IBOutlet weak var usernameLabel: UILabel!
     @IBOutlet weak var screenNameLabel: UILabel!
     @IBOutlet weak var descriptionLabel: UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        userProfileImage.contentMode = .scaleAspectFit
-        userProfileImage.clipsToBounds = true
-        userProfileImage.layer.cornerRadius = 48/2
-        userProfileImage.backgroundColor = .white
+        userProfileImageView.contentMode = .scaleAspectFit
+        userProfileImageView.clipsToBounds = true
+        userProfileImageView.layer.cornerRadius = 48/2
+        userProfileImageView.backgroundColor = .white
     }
 
 
@@ -29,7 +30,7 @@ class UserCell: UITableViewCell {
     }
     
     func set(name: String, screenName: String, verified: Bool = false) {
-        let string = NSMutableAttributedString(string: "\(name)", attributes: [.font : UIFont.boldSystemFont(ofSize: 14), .foregroundColor: UIColor(named: "PrimaryColor")!])
+        let string = NSMutableAttributedString(string: "\(name)", attributes: [.font : UIFont.boldSystemFont(ofSize: 14), .foregroundColor: UIColor.black])
         if (verified) {
             string.append(NSAttributedString(attachment: NSTextAttachment(image: UIImage(systemName: "checkmark")!)))
         }

@@ -20,14 +20,16 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ziq-o3-OhA">
-                    <rect key="frame" x="60" y="486.5" width="294" height="43"/>
-                    <color key="backgroundColor" name="PrimaryColor"/>
+                    <rect key="frame" x="60" y="489" width="294" height="43"/>
+                    <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="43" id="Ymb-lR-a6n"/>
                     </constraints>
-                    <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="25"/>
-                    <color key="tintColor" name="SecondaryColor"/>
-                    <state key="normal" title="Login with Twitter"/>
+                    <fontDescription key="fontDescription" name="GillSans-SemiBold" family="Gill Sans" pointSize="19"/>
+                    <color key="tintColor" name="SpecialGreen"/>
+                    <state key="normal" title="Login with Twitter">
+                        <color key="titleColor" name="SpecialGreen"/>
+                    </state>
                     <connections>
                         <action selector="loginAction:" destination="-1" eventType="touchUpInside" id="snA-Hy-ytT"/>
                     </connections>
@@ -40,20 +42,20 @@
                     </constraints>
                 </imageView>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="TweetMe" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="n2I-8g-c9R">
-                    <rect key="frame" x="156" y="438" width="103" height="28"/>
-                    <fontDescription key="fontDescription" name="Chalkduster" family="Chalkduster" pointSize="22"/>
-                    <color key="textColor" name="PrimaryColor"/>
+                    <rect key="frame" x="143" y="435" width="133" height="26"/>
+                    <fontDescription key="fontDescription" name="GillSans-Bold" family="Gill Sans" pointSize="27"/>
+                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <nil key="highlightedColor"/>
                 </label>
             </subviews>
             <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
-            <color key="backgroundColor" name="SecondaryColor"/>
+            <color key="backgroundColor" name="SpecialGreen"/>
             <constraints>
                 <constraint firstItem="Ziq-o3-OhA" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="80" id="15W-5c-q6r">
                     <variation key="widthClass=compact" constant="60"/>
                 </constraint>
                 <constraint firstItem="n2I-8g-c9R" firstAttribute="centerX" secondItem="fnl-2z-Ty3" secondAttribute="centerX" id="41G-Pd-1Ci"/>
-                <constraint firstItem="Ziq-o3-OhA" firstAttribute="top" secondItem="n2I-8g-c9R" secondAttribute="bottom" constant="19.5" id="IIt-pt-fBP"/>
+                <constraint firstItem="Ziq-o3-OhA" firstAttribute="top" secondItem="n2I-8g-c9R" secondAttribute="bottom" constant="20" id="IIt-pt-fBP"/>
                 <constraint firstItem="Ziq-o3-OhA" firstAttribute="centerX" secondItem="fnl-2z-Ty3" secondAttribute="centerX" id="Qnp-wp-9Ir"/>
                 <constraint firstItem="n2I-8g-c9R" firstAttribute="top" secondItem="kAY-WE-kKm" secondAttribute="bottom" constant="25" id="YjF-eM-CI1"/>
                 <constraint firstItem="n2I-8g-c9R" firstAttribute="centerY" secondItem="fnl-2z-Ty3" secondAttribute="centerY" id="u2B-yv-q3Y"/>
@@ -63,12 +65,9 @@
         </view>
     </objects>
     <resources>
-        <image name="Logo" width="734.5" height="734.5"/>
-        <namedColor name="PrimaryColor">
-            <color red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </namedColor>
-        <namedColor name="SecondaryColor">
-            <color red="0.89800000190734863" green="0.10199999809265137" blue="0.29399999976158142" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        <image name="Logo" width="768.5" height="768.5"/>
+        <namedColor name="SpecialGreen">
+            <color red="0.86274509803921573" green="0.92941176470588238" blue="0.78431372549019607" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
     </resources>
 </document>

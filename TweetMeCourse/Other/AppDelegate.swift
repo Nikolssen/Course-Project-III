@@ -15,8 +15,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
-        UITabBar.appearance().unselectedItemTintColor = UIColor(named: "SecondaryColor")
-        UITabBar.appearance().tintColor = UIColor(named: "SecondaryColor")
+        UITabBar.appearance().unselectedItemTintColor = .darkGray
+        UITabBar.appearance().tintColor = .black
         return true
     }
 
