@@ -100,22 +100,6 @@ class UserListController: UITableViewController {
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 70
     }
-    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-//        if (scrollView.contentOffset.y + scrollView.frame.size.height) > scrollView.contentSize.height {
-//            guard let swifter = TwitterService.swifter, users.count > 0, !requestSent else
-//            {return}
-//            requestSent = true
-//            swifter.getUserFollowing(for: userTag, cursor: <#T##String?#>, count: <#T##Int?#>, skipStatus: <#T##Bool?#>, includeUserEntities: <#T##Bool?#>, success: <#T##Swifter.CursorSuccessHandler?##Swifter.CursorSuccessHandler?##(JSON, String?, String?) -> Void#>, failure: <#T##Swifter.FailureHandler?##Swifter.FailureHandler?##(Error) -> Void#>)
-//            swifter.getHomeTimeline(count: 10, maxID: tweets.last?.tweetID, success: {[weak self] json in
-//                if var array = json.array {
-//                    array.remove(at: 0)
-//                    self?.tweets.append(contentsOf: Tweet.array(of: array))
-//                    self?.collectionView.reloadData()
-//                    self?.requestSend = false
-//                }
-//            }, failure: {[weak self] _ in self?.requestSend = false})
-//        }
-    }
     
     init(userTag:UserTag, option: UserListOption) {
         self.userTag = userTag
