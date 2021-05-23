@@ -12,7 +12,6 @@ import AuthenticationServices
 
 class LoginController: UIViewController {
     
-    var swifter: Swifter!
     
     @IBOutlet weak var loginButton: UIButton!
     override func viewDidLoad() {
@@ -20,9 +19,9 @@ class LoginController: UIViewController {
         loginButton.layer.cornerRadius = 18
     }
     
-    @IBAction func loginAction(_ sender: UIButton)
+    @IBAction private func loginAction(_ sender: UIButton)
     {
-        swifter = Swifter(consumerKey: TwitterConstants.consumerKey, consumerSecret: TwitterConstants.consumerSecret)
+        let swifter = Swifter(consumerKey: TwitterConstants.consumerKey, consumerSecret: TwitterConstants.consumerSecret)
         swifter.authorize(withProvider: self, callbackURL: URL(string: TwitterConstants.callbackURL)!, success:{
             accessToken, _ in
             if let accessToken = accessToken {

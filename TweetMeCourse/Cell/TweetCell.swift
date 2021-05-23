@@ -127,12 +127,12 @@ class TweetCell: UICollectionViewCell {
     }
     
     @objc func likeButtonTapped() {
-        delegate?.likeButtonTapped(tweetID: tweetID, sender: self)
+        delegate?.likeButtonTapped(tweetID: tweetID)
             
     }
     
     @objc func retweetButtonTapped(){
-        delegate?.retweetButtonTapped(tweetID: tweetID, sender: self)
+        delegate?.retweetButtonTapped(tweetID: tweetID)
     }
     
     @objc func userImageTapped(){
@@ -148,6 +148,6 @@ class TweetCell: UICollectionViewCell {
 
 protocol TweetCellDelegate: AnyObject {
     func userImageTapped(userID: String?)
-    func retweetButtonTapped(tweetID: String?, sender: TweetCell)
-    func likeButtonTapped(tweetID: String?, sender: TweetCell)
+    func retweetButtonTapped(tweetID: String?)
+    func likeButtonTapped(tweetID: String?)
 }

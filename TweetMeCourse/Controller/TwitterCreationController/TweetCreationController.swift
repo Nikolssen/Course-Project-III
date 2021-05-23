@@ -9,9 +9,9 @@ import UIKit
 
 class TweetCreationController: UIViewController, UITextViewDelegate {
 
-    @IBOutlet weak var textViewHeight: NSLayoutConstraint!
-    @IBOutlet weak var tweetTextView: UITextView!
-    @IBOutlet weak var postButton: UIButton!
+    @IBOutlet private weak var textViewHeight: NSLayoutConstraint!
+    @IBOutlet private weak var tweetTextView: UITextView!
+    @IBOutlet private weak var postButton: UIButton!
     override func viewDidLoad() {
         super.viewDidLoad()
         tweetTextView.delegate = self
@@ -20,7 +20,7 @@ class TweetCreationController: UIViewController, UITextViewDelegate {
         textViewHeight.constant = UIScreen.main.bounds.height * 0.55
     }
 
-    @IBAction func postAction(_ sender: UIButton) {
+    @IBAction private func postAction(_ sender: UIButton) {
         if let text = tweetTextView.text, let swifter = TwitterService.swifter {
             swifter.postTweet(status: text)
         }
@@ -34,13 +34,13 @@ class TweetCreationController: UIViewController, UITextViewDelegate {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: UIWindow.keyboardWillHideNotification, object: nil)
     }
     
-    @objc func keyboardWillShow(notification: Notification) {
+    @objc private func keyboardWillShow(notification: Notification) {
         textViewHeight.constant = UIScreen.main.bounds.height * 0.3
         view.setNeedsLayout()
         
     }
     
-    @objc func keyboardWillHide(notification: Notification) {
+    @objc private func keyboardWillHide(notification: Notification) {
         textViewHeight.constant = UIScreen.main.bounds.height * 0.55
         view.setNeedsLayout()
         

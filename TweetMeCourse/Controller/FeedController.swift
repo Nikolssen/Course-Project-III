@@ -10,9 +10,8 @@ import UIKit
 private let reuseIdentifier = "TweetCellID"
 
 class FeedController: UICollectionViewController {
-    var tweets = [Tweet]()
-    var requestSend: Bool = false
-    var refresher: UIRefreshControl!
+    private var tweets = [Tweet]()
+    private var requestSend: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,9 +19,9 @@ class FeedController: UICollectionViewController {
         self.clearsSelectionOnViewWillAppear = false
         self.collectionView!.register(TweetCell.self, forCellWithReuseIdentifier: reuseIdentifier)
         view.backgroundColor = UIColor(named: "BackgroundColor")
-        self.refresher = UIRefreshControl()
+        let refresher = UIRefreshControl()
         self.collectionView.alwaysBounceVertical = true
-        self.refresher.addTarget(self, action: #selector(refresh), for: .valueChanged)
+        refresher.addTarget(self, action: #selector(refresh), for: .valueChanged)
         self.collectionView.refreshControl = refresher
         collectionView?.backgroundColor = UIColor(named: "BackgroundColor")
         
@@ -39,7 +38,7 @@ class FeedController: UICollectionViewController {
         
     }
     
-    @objc func refresh() {
+    @objc private func refresh() {
         self.collectionView.refreshControl?.beginRefreshing()
         if let first = tweets.first, let swifter = TwitterService.swifter {
             swifter.getHomeTimeline(count: nil, sinceID: first.tweetID, success: {json in
@@ -155,7 +154,7 @@ extension FeedController: TweetCellDelegate{
         navigationController?.pushViewController(userVC, animated: true)
     }
     
-    func retweetButtonTapped(tweetID: String?, sender: TweetCell) {
+    func retweetButtonTapped(tweetID: String?) {
         guard let swifter = TwitterService.swifter, let id = tweetID else {
             return
         }
@@ -193,7 +192,7 @@ extension FeedController: TweetCellDelegate{
         
     }
     
-    func likeButtonTapped(tweetID: String?, sender: TweetCell) {
+    func likeButtonTapped(tweetID: String?) {
         guard let tweetID = tweetID, let swifter = TwitterService.swifter else {
             return
         }

@@ -10,10 +10,8 @@ import Swifter
 
 class MainTabBarController: UITabBarController {
     
-    var accToken: Credential.OAuthAccessToken?
-    var swifter: Swifter!
     
-    let actionButton: UIButton = {
+    private let actionButton: UIButton = {
         let button = UIButton(type: .system)
         button.tintColor = .black
         button.backgroundColor = UIColor(named: "SpecialBlue")

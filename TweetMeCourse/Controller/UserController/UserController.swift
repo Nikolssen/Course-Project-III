@@ -24,10 +24,10 @@ class UserController: UIViewController {
     @IBOutlet weak var followButton: UIButton!
     @IBOutlet weak var collectionView: UICollectionView!
     
-    var user: ExtendedUser?
-    let userTag: UserTag
-    var userTweets: [Tweet] = []
-    var requestSend = false
+    private var user: User?
+    private let userTag: UserTag
+    private var userTweets: [Tweet] = []
+    private var requestSend = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -51,7 +51,7 @@ class UserController: UIViewController {
         guard let swifter = TwitterService.swifter else {return}
         swifter.showUser(userTag, success: {[weak self]
             json in
-            self?.user = ExtendedUser(json: json)
+            self?.user = User(json: json)
                 if let user = self?.user
                 {
                     self?.set(name: user.name, verified: user.verified)
@@ -255,7 +255,7 @@ extension UserController: TweetCellDelegate{
     func userImageTapped(userID: String?) {
     }
     
-    func retweetButtonTapped(tweetID: String?, sender: TweetCell) {
+    func retweetButtonTapped(tweetID: String?) {
         guard let swifter = TwitterService.swifter, let id = tweetID else {
             return
         }
@@ -293,7 +293,7 @@ extension UserController: TweetCellDelegate{
         
     }
     
-    func likeButtonTapped(tweetID: String?, sender: TweetCell) {
+    func likeButtonTapped(tweetID: String?) {
         guard let tweetID = tweetID, let swifter = TwitterService.swifter else {
             return
         }
