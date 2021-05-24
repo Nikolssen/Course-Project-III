@@ -9,9 +9,7 @@ import UIKit
 
 class TweetCell: UICollectionViewCell {
     weak var delegate: TweetCellDelegate?
-    var userID: String?
-    var tweetID: String?
-    
+    var index: Int?
     let profileImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
@@ -127,16 +125,16 @@ class TweetCell: UICollectionViewCell {
     }
     
     @objc func likeButtonTapped() {
-        delegate?.likeButtonTapped(tweetID: tweetID)
+        delegate?.likeButtonTapped(index: index)
             
     }
     
     @objc func retweetButtonTapped(){
-        delegate?.retweetButtonTapped(tweetID: tweetID)
+        delegate?.retweetButtonTapped(index: index)
     }
     
     @objc func userImageTapped(){
-        delegate?.userImageTapped(userID: userID)
+        delegate?.userImageTapped(index: index)
     }
     
     required init?(coder: NSCoder) {
@@ -147,7 +145,7 @@ class TweetCell: UICollectionViewCell {
 
 
 protocol TweetCellDelegate: AnyObject {
-    func userImageTapped(userID: String?)
-    func retweetButtonTapped(tweetID: String?)
-    func likeButtonTapped(tweetID: String?)
+    func userImageTapped(index: Int?)
+    func retweetButtonTapped(index: Int?)
+    func likeButtonTapped(index: Int?)
 }

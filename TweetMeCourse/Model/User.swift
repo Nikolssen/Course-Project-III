@@ -17,7 +17,7 @@ struct User {
     let verified: Bool
     
   //  let creationDate: String
-    let following: Bool
+    var following: Bool
     
     init?(json: JSON){
         guard let screenName = json["screen_name"].string,

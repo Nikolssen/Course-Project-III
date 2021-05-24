@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import Swifter
+
 
 class MainTabBarController: UITabBarController {
     
@@ -28,33 +28,43 @@ class MainTabBarController: UITabBarController {
         let unselectedImageConfiguration =
             UIImage.SymbolConfiguration(weight: .light)
         let selectedImageConfiguration = UIImage.SymbolConfiguration(weight: .heavy)
+        
+        
         let feedVC = FeedController(collectionViewLayout: UICollectionViewFlowLayout())
-        let feedNav = navigationControllerWrapper(for: feedVC, image: UIImage(systemName: "house", withConfiguration: unselectedImageConfiguration), selectedImage: UIImage(systemName:  "house.fill", withConfiguration: selectedImageConfiguration))
+        let feedPresenter = FeedPresenter(controller: feedVC)
+        feedVC.presenter = feedPresenter
+        
+        let feedNav = UINavigationController(rootViewController: feedVC)
         feedNav.tabBarItem.title = "Feed"
+        feedNav.tabBarItem.image = UIImage(systemName: "house", withConfiguration: unselectedImageConfiguration)
+        feedNav.tabBarItem.selectedImage = UIImage(systemName:  "house.fill", withConfiguration: selectedImageConfiguration)
 
-        let userNav = navigationControllerWrapper(for: UserController(userID: TwitterService.userID!, nibName: "UserController", bundle: nil), image: UIImage(systemName: "person", withConfiguration: unselectedImageConfiguration), selectedImage: UIImage(systemName:  "person.fill", withConfiguration: selectedImageConfiguration))
+        let userVC = UserController(nibName: "UserController", bundle: nil)
+        let userPresenter = UserPresenter(controller: userVC, userID: TwitterService.userID!)
+        userVC.presenter = userPresenter
+        
+        let userNav = UINavigationController(rootViewController:userVC)
         userNav.tabBarItem.title = "My profile"
+        userNav.tabBarItem.image = UIImage(systemName: "person", withConfiguration: unselectedImageConfiguration)
+        userNav.tabBarItem.selectedImage = UIImage(systemName:  "person.fill", withConfiguration: selectedImageConfiguration)
+        
+        configureActionButton()
         
         viewControllers = [feedNav, userNav]
-        configureActionButton()
+        
         
     }
     @objc func actionButtonTapped(){
-        present(TweetCreationController(), animated: true, completion: nil)
+        let tweetVC = TweetCreationController(nibName: "TweetCreationController", bundle: nil)
+        let tweetPresenter = TweetCreationPresenter(controller: tweetVC)
+        tweetVC.presenter = tweetPresenter
+        present(tweetVC, animated: true, completion: nil)
     }
-    
-    func navigationControllerWrapper(for rootViewController: UIViewController, image: UIImage?, selectedImage: UIImage?) -> UINavigationController{
-        let navigationController = UINavigationController(rootViewController: rootViewController)
-        navigationController.tabBarItem.image = image
-        navigationController.tabBarItem.selectedImage = selectedImage
-        return navigationController
-    }
-    
+
     func configureActionButton(){
         view.addSubview(actionButton)
         actionButton.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([actionButton.heightAnchor.constraint(equalToConstant: 50), actionButton.widthAnchor.constraint(equalToConstant: 50), actionButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -84), actionButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16)])
-        
     }
     
 }

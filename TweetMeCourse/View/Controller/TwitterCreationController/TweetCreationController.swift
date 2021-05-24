@@ -7,23 +7,23 @@
 
 import UIKit
 
-class TweetCreationController: UIViewController, UITextViewDelegate {
+class TweetCreationController: UIViewController{
 
     @IBOutlet private weak var textViewHeight: NSLayoutConstraint!
     @IBOutlet private weak var tweetTextView: UITextView!
     @IBOutlet private weak var postButton: UIButton!
+    var presenter: TweetCreationPresenter!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        tweetTextView.delegate = self
         postButton.layer.cornerRadius = 18
         tweetTextView.layer.cornerRadius = 5
         textViewHeight.constant = UIScreen.main.bounds.height * 0.55
     }
 
     @IBAction private func postAction(_ sender: UIButton) {
-        if let text = tweetTextView.text, let swifter = TwitterService.swifter {
-            swifter.postTweet(status: text)
-        }
+        guard let text = tweetTextView.text else {return}
+        presenter.createTweet(text: text)
         dismiss(animated: true, completion: nil)
     }
     
@@ -48,4 +48,10 @@ class TweetCreationController: UIViewController, UITextViewDelegate {
     override func viewWillDisappear(_ animated: Bool) {
         NotificationCenter.default.removeObserver(self)
     }
+}
+
+extension TweetCreationController: TweetCreationViewProtocol{
+    func dismiss() {
+        dismiss(animated: true, completion: nil)
+    }    
 }

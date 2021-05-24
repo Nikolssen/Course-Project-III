@@ -18,16 +18,20 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let scene = (scene as? UIWindowScene) else { return }
         let theWindow = UIWindow(windowScene: scene)
         isLoggedIn{ [weak self] loggedIn in
-            var rootVC: UIViewController
+            
             if loggedIn {
-                rootVC = MainTabBarController()
+                let rootVC = MainTabBarController()
+                theWindow.rootViewController = rootVC
             }
             else
             {
-                rootVC = LoginController(nibName: "LoginController", bundle: nil)
+                let rootVC = LoginController(nibName: "LoginController", bundle: nil)
+                let loginPresenter = LoginPresenter(controller: rootVC)
+                rootVC.presenter = loginPresenter
                 TwitterService.swifter = nil
+                theWindow.rootViewController = rootVC
             }
-            theWindow.rootViewController = rootVC
+            
             self?.window = theWindow
             self?.window?.makeKeyAndVisible()
         }
