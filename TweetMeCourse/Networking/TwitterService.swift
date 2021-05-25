@@ -19,6 +19,12 @@ class TwitterService {
     static var swifter: Swifter?
     static var userID: String?
     static var imageDownloader: ImageDownloader? = ImageDownloader()
+    
+    static func reset(){
+        swifter = nil
+        userID = nil
+        imageDownloader = nil
+    }
 }
 
 

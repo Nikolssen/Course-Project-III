@@ -42,7 +42,6 @@ class UserController: UIViewController, UserViewProtocol {
         self.collectionView.refreshControl = refresher
         
         presenter.loadUser()
-        //presenter.loadInitialTweets(action: nil)
     }
     
     override func viewWillAppear(_ animated: Bool)

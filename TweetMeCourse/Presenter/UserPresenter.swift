@@ -210,8 +210,8 @@ class UserPresenter{
             userDefaults.removeObject(forKey: "oauth_token")
             userDefaults.removeObject(forKey: "oauth_token_secret")
             userDefaults.removeObject(forKey: "user_id")
-            TwitterService.imageDownloader = ImageDownloader()
-
+            TwitterService.reset()
+            controller?.backToLogin()
             return
         }
         
